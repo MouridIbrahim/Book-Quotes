@@ -27,10 +27,10 @@ public class QuotesController {
     public ResponseEntity<?> createQuote(@RequestBody QuoteRequestDto quoteRequestDto) {
 
         try {
-            // Find the user
+
             User user = userService.getUserById(quoteRequestDto.getUserId());
 
-            // Create quote entity from DTO
+
             Quotes quote = new Quotes(
                     quoteRequestDto.getText(),
                     quoteRequestDto.getAuthor(),
@@ -38,10 +38,10 @@ public class QuotesController {
                     user
             );
 
-            // Save the quote
+
             Quotes savedQuote = quotesService.addQuotes(quote);
 
-            // Convert to response DTO
+
             QuoteResponseDto responseDto = new QuoteResponseDto(
                     savedQuote.getText(),
                     savedQuote.getAuthor(),
