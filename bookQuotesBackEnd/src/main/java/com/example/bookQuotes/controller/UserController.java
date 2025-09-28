@@ -2,6 +2,7 @@ package com.example.bookQuotes.controller;
 
 import com.example.bookQuotes.dto.AuthRequestDto;
 import com.example.bookQuotes.dto.AuthResponseDto;
+import com.example.bookQuotes.dto.DeleteResponseDto;
 import com.example.bookQuotes.dto.SignUpDto;
 import com.example.bookQuotes.entity.User;
 import com.example.bookQuotes.services.UserService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +68,17 @@ public class UserController {
                 updatedUser.getEmail()
         );
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<DeleteResponseDto> deleteUser(@PathVariable Long id,AuthRequestDto requestDto){
+         userService.deleteUser(id);
+         DeleteResponseDto response = new DeleteResponseDto(
+                 requestDto.getUsername(),
+                 "User Deleted",
+                 LocalDateTime.now()
+         );
+         return ResponseEntity.ok(response);
     }
 
 }

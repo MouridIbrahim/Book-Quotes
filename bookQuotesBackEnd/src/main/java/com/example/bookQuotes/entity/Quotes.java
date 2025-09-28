@@ -26,6 +26,16 @@ public class Quotes {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public Quotes() {
+    }
+
+    public Quotes( String text, String author, String book_title, User user) {
+        this.text = text;
+        this.author = author;
+        this.book_title = book_title;
+        this.user = user;
+    }
+
     public Long getId() {
         return id;
     }
