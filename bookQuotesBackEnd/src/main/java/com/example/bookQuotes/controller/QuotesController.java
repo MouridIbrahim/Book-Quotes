@@ -8,10 +8,10 @@ import com.example.bookQuotes.services.UserServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/quotes")
@@ -53,5 +53,14 @@ public class QuotesController {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<QuoteResponseDto>> getAllQuotes(){
+        List<Quotes> quotes= quotesService.getAllQuotes();
+        List<QuoteResponseDto> response = quotes.stream()
+                .map(quote->new QuoteResponseDto(quote.getText(),quote.getAuthor(),quote.getBook_title()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
     }
 }
