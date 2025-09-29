@@ -63,4 +63,10 @@ public class QuotesController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteQuote(@PathVariable  Long id){
+        quotesService.deleteQuotes(id);
+        return ResponseEntity.ok(HttpStatus.ACCEPTED);
+    }
 }
