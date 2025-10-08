@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 abstract class Failure extends Equatable {
   final String message;
-  Failure(this.message);
+  const Failure(this.message);
 
   @override
   List<Object?> get props => [message];
@@ -11,56 +11,56 @@ abstract class Failure extends Equatable {
 
 // Server/API Failures
 class ServerFailure extends Failure {
-   ServerFailure([String message = 'Server error occurred']) : super(message);
+   const ServerFailure([super.message = 'Server error occurred']);
 }
 
 // Network Failures
 class NetworkFailure extends Failure {
-   NetworkFailure([String message = 'No internet connection']) : super(message);
+   const NetworkFailure([super.message = 'No internet connection']);
 }
 
 // Authentication Failures
 class AuthenticationFailure extends Failure {
-   AuthenticationFailure([String message = 'Authentication failed']) : super(message);
+   const AuthenticationFailure([super.message = 'Authentication failed']);
 }
 
 class UnauthorizedFailure extends Failure {
-   UnauthorizedFailure([String message = 'Unauthorized access']) : super(message);
+   const UnauthorizedFailure([super.message = 'Unauthorized access']);
 }
 
 class TokenExpiredFailure extends Failure {
-   TokenExpiredFailure([String message = 'Session expired. Please login again']) : super(message);
+   const TokenExpiredFailure([super.message = 'Session expired. Please login again']);
 }
 
 // Validation Failures
 class ValidationFailure extends Failure {
-   ValidationFailure([String message = 'Invalid input']) : super(message);
+   const ValidationFailure([super.message = 'Invalid input']);
 }
 
 // Cache Failures
 class CacheFailure extends Failure {
-   CacheFailure([String message = 'Cache error occurred']) : super(message);
+   const CacheFailure([super.message = 'Cache error occurred']);
 }
 
 // Not Found Failures
 class NotFoundFailure extends Failure {
-   NotFoundFailure([String message = 'Resource not found']) : super(message);
+   const NotFoundFailure([super.message = 'Resource not found']);
 }
 
 // General Failures
 class UnexpectedFailure extends Failure {
-   UnexpectedFailure([String message = 'An unexpected error occurred']) : super(message);
+   const UnexpectedFailure([super.message = 'An unexpected error occurred']);
 }
 
 // Specific to your Book Quotes App
 class QuoteNotFoundFailure extends Failure {
-   QuoteNotFoundFailure([String message = 'Quote not found']) : super(message);
+   const QuoteNotFoundFailure([super.message = 'Quote not found']);
 }
 
 class BookNotFoundFailure extends Failure {
-   BookNotFoundFailure([String message = 'Book not found']) : super(message);
+   const BookNotFoundFailure([super.message = 'Book not found']);
 }
 
 class DuplicateQuoteFailure extends Failure {
-   DuplicateQuoteFailure([String message = 'Quote already exists']) : super(message);
+   const DuplicateQuoteFailure([super.message = 'Quote already exists']);
 }

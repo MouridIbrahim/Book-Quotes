@@ -11,20 +11,17 @@ class AppException implements Exception {
 
 // Server Exceptions
 class ServerException extends AppException {
-  const ServerException([String message = 'Server error occurred', String? code]) 
-      : super(message, code);
+  const ServerException([super.message = 'Server error occurred', super.code]);
 }
 
 // Network Exceptions
 class NetworkException extends AppException {
-  const NetworkException([String message = 'No internet connection']) 
-      : super(message);
+  const NetworkException([super.message = 'No internet connection']);
 }
 
 // Authentication Exceptions
 class AuthException extends AppException {
-  const AuthException([String message = 'Authentication failed', String? code]) 
-      : super(message, code);
+  const AuthException([super.message = 'Authentication failed', super.code]);
 }
 
 class UnauthorizedException extends AppException {
@@ -39,14 +36,12 @@ class TokenExpiredException extends AppException {
 
 // Validation Exceptions
 class ValidationException extends AppException {
-  const ValidationException([String message = 'Validation failed']) 
-      : super(message);
+  const ValidationException([super.message = 'Validation failed']);
 }
 
 // Cache Exceptions
 class CacheException extends AppException {
-  const CacheException([String message = 'Cache operation failed']) 
-      : super(message);
+  const CacheException([super.message = 'Cache operation failed']);
 }
 
 // Not Found Exceptions

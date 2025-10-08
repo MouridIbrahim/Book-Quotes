@@ -1,16 +1,19 @@
-import 'package:bookquotes/features/user/Data/models/user_model.dart';
-
-class Loginresponsedto {
-  final UserModel user;
+class LoginResponseModel {
   final String token;
+  final String username;
+  final String message;
 
-  Loginresponsedto({required this.user, required this.token});
+  LoginResponseModel({
+    required this.token,
+    required this.username,
+    required this.message,
+  });
 
-  factory Loginresponsedto.fromJson(Map<String, dynamic> json) =>
-      Loginresponsedto(
-        user: UserModel.fromJson(json['user']),
-        token: json['token'] as String,
-      );
-
-  Map<String, dynamic> toJson() => {'user': user.toJson(), 'token': token};
+  factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
+    return LoginResponseModel(
+      token: json['token'] ?? '',
+      username: json['username'] ?? '',
+      message: json['message'] ?? '',
+    );
+  }
 }

@@ -44,7 +44,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
