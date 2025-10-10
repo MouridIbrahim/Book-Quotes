@@ -3,7 +3,6 @@ import 'package:bookquotes/features/user/Data/dataSources/userRemote.dart';
 import 'package:bookquotes/features/user/Data/models/loginRequestDTO.dart';
 import 'package:bookquotes/features/user/Data/models/loginResponseDTO.dart';
 import 'package:bookquotes/features/user/Data/models/signUpRequestDTO.dart';
-import 'package:bookquotes/features/user/Data/models/userModel.dart';
 import 'package:bookquotes/features/user/domain/entities/User.dart';
 import 'package:bookquotes/features/user/domain/repositories/UserDomainRepo.dart';
 import 'package:dartz/dartz.dart';
@@ -45,6 +44,7 @@ class UserRepositoryImpl implements UserDomainRepository {
     }
   }
 
+  @override
   Future<Either<Failure, Unit>> deleteUser(int id, String token) async {
   try {
     return await remoteDataSource.deleteUser(id, token);

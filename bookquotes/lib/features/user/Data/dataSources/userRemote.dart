@@ -6,7 +6,6 @@ import 'package:bookquotes/features/user/Data/models/loginRequestDTO.dart';
 import 'package:bookquotes/features/user/Data/models/loginResponseDTO.dart';
 import 'package:bookquotes/features/user/Data/models/signUpRequestDTO.dart';
 import 'package:bookquotes/features/user/Data/models/userModel.dart';
-import 'package:bookquotes/features/user/domain/entities/User.dart';
 
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;

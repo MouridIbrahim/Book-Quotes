@@ -34,4 +34,18 @@ flutter:
 
   uses-material-design: true
 
+  assets:
+    - assets/images/
+
+  fonts:
+    - family: Playfair
+      fonts:
+        - asset: assets/fonts/Playfair_9pt-Black.ttf
+        - asset: assets/fonts/Playfair_9pt-Bold.ttf
+        - asset: assets/fonts/Playfair_9pt-ExtraBold.ttf
+        - asset: assets/fonts/Playfair_9pt-ExtraBoldItalic.ttf
+        - asset: assets/fonts/Playfair_9pt-Light.ttf
+        - asset: assets/fonts/Playfair_9pt-Medium.ttf
+    
+
 

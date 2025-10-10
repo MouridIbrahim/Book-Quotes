@@ -1,4 +1,3 @@
-import 'package:bookquotes/features/user/Data/models/loginRequestDTO.dart';
 import 'package:bookquotes/features/user/Data/models/loginResponseDTO.dart';
 import 'package:dartz/dartz.dart';
 import 'package:bookquotes/core/error/Failure.dart';

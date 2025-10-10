@@ -1,7 +1,9 @@
+import 'package:bookquotes/core/config/theme/AppTheme.dart';
+import 'package:bookquotes/features/user/Presentation/splash/pages/splash.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -9,6 +11,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.LightTheme,
+      home: const SplashPage(),
+    );
   }
 }
