@@ -1,5 +1,5 @@
 import 'package:bookquotes/core/config/theme/AppTheme.dart';
-import 'package:bookquotes/features/user/Presentation/splash/pages/splash.dart';
+import 'package:bookquotes/features/user/Presentation/pages/Getstartedone.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.LightTheme,
-      home: const SplashPage(),
+      home:  Getstartedone(),
     );
   }
 }
