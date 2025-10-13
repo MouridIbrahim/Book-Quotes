@@ -1,15 +1,16 @@
 import 'package:bookquotes/common/widgets/getStartedButton.dart';
 import 'package:bookquotes/core/config/theme/AppColor.dart';
+import 'package:bookquotes/features/user/Presentation/authetications/pages/loginPage.dart';
 import 'package:flutter/material.dart';
 
-class Getstartedone extends StatefulWidget {
-  const Getstartedone({super.key});
+class Getstartedtwo extends StatefulWidget {
+  const Getstartedtwo({super.key});
 
   @override
-  State<Getstartedone> createState() => _GetstartedoneState();
+  State<Getstartedtwo> createState() => _GetstartedtwoState();
 }
 
-class _GetstartedoneState extends State<Getstartedone> {
+class _GetstartedtwoState extends State<Getstartedtwo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +20,7 @@ class _GetstartedoneState extends State<Getstartedone> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage('assets/images/image2.jpg'),
+                image: AssetImage('assets/images/image3.jpg'),
               ),
             ),
           ),
@@ -36,9 +37,9 @@ class _GetstartedoneState extends State<Getstartedone> {
                 children: [
                   Spacer(),
                   Text(
-                    'Discover the power of \nwords',
+                    'Let the right words find \n you',
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 25,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -48,7 +49,7 @@ class _GetstartedoneState extends State<Getstartedone> {
                   Text(
                     'Explore a vast collection of inspiring quotes from renowned authors, thinkers, and leaders',
                     style: TextStyle(
-                      fontSize: 19,
+                      fontSize: 15,
                       fontWeight: FontWeight.w200,
                       color: AppColor.textWhiteColor,
                     ),
@@ -56,7 +57,12 @@ class _GetstartedoneState extends State<Getstartedone> {
                   ),
                   SizedBox(height: 50),
                   Getstartedbutton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Loginpage()),
+                      );
+                    },
                     text: 'Get Started',
                     width: 200,
                     height: 50,

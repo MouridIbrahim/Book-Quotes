@@ -1,5 +1,7 @@
+
+
 import 'package:bookquotes/core/config/theme/AppColor.dart';
-import 'package:bookquotes/features/user/Presentation/pages/Getstartedone.dart';
+import 'package:bookquotes/features/user/Presentation/splash/pages/Getstartedone.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {
@@ -59,7 +61,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> navigateToNextPage() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 5));
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
