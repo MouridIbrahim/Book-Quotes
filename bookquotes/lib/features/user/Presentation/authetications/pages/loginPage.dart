@@ -1,9 +1,11 @@
+// features/user/presentation/authetications/pages/loginPage.dart
 import 'dart:math';
-
-import 'package:bookquotes/common/widgets/loginButton.dart';
-import 'package:bookquotes/core/config/theme/AppColor.dart';
-import 'package:bookquotes/features/user/Presentation/authetications/pages/signupPage.dart';
+import 'package:bookquotes/features/user/Presentation/authetications/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/services.dart';
+import 'package:bookquotes/features/user/presentation/authetications/pages/signupPage.dart';
+import 'package:bookquotes/main_app.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -12,155 +14,430 @@ class Loginpage extends StatefulWidget {
   State<Loginpage> createState() => _LoginpageState();
 }
 
-class _LoginpageState extends State<Loginpage> {
+class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isPasswordVisible = false;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.0, 0.65, curve: Curves.easeInOut),
+    ));
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
+    ));
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final double widgetWidth = min(
-      400,
-      MediaQuery.of(context).size.width * 0.8,
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    
+    final double widgetWidth = min(400, screenWidth * 0.85);
+    final double titleFontSize = screenWidth < 400 ? 40 : 
+                                screenWidth < 600 ? 50 : 60;
+    final double subtitleFontSize = screenWidth < 400 ? 16 : 
+                                   screenWidth < 600 ? 18 : 20;
+    
+    final double verticalSpacing = screenHeight * 0.02;
+    final double largeVerticalSpacing = screenHeight * 0.04;
+    final double extraLargeVerticalSpacing = screenHeight * 0.06;
+    
+    final EdgeInsets screenPadding = EdgeInsets.symmetric(
+      horizontal: screenWidth * 0.05,
+      vertical: screenHeight * 0.05,
     );
 
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'QuoteShare',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Find and share your favorite quotes',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w200,
-                color: AppColor.texyGreyColor,
-              ),
-            ),
-            SizedBox(height: 50),
-            SizedBox(
-              width: widgetWidth,
-              child: TextField(
-                cursorColor: AppColor.textColorBlack,
-                style: TextStyle(
-                  color: AppColor.textColorBlack,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  suffixIcon: null,
-                  hintText: 'Email',
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
 
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-
-                    borderSide: BorderSide(
-                      color: AppColor.texyGreyColor,
-                    ), // default border color
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(
-                      color: AppColor.texyGreyColor,
-                    ), // border color when enabled
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(
-                      color: AppColor.texyGreyColor,
-                      width: 2,
-                    ), // border color when focused
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 25,
-                  ),
-                ),
-              ),
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is LoginSuccess) {
+          // Handle successful login
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Welcome ${state.loginResponse.username}!')),
+          );
+          // Navigate to main app
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+          );
+        }
+        if (state is AuthError) {
+          // Handle errors
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                const Color(0xFFF5F5DC),
+                const Color(0xFFE8E0D5),
+              ],
             ),
-            SizedBox(height: 20),
-            SizedBox(
-              width: widgetWidth,
-              child: TextFormField(
-                cursorColor: AppColor.textColorBlack,
-                style: TextStyle(
-                  color: AppColor.textColorBlack,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                controller: passwordController,
-                obscureText: isPasswordVisible,
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(
-                      color: AppColor.texyGreyColor,
-                    ), // default border color
+          ),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: screenPadding,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: screenHeight - screenPadding.top - screenPadding.bottom,
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(
-                      color: AppColor.texyGreyColor,
-                    ), // border color when enabled
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(
-                      color: AppColor.texyGreyColor,
-                      width: 2,
-                    ), // border color when focused
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 25,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      isPasswordVisible
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                  child: Center(
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: BlocBuilder<AuthBloc, AuthState>(
+                          builder: (context, state) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Logo and title section
+                                Container(
+                                  padding: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 10),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    Icons.format_quote,
+                                    size: titleFontSize * 0.8,
+                                    color: const Color(0xFFD4AF37),
+                                  ),
+                                ),
+                                SizedBox(height: largeVerticalSpacing),
+                                
+                                // App title
+                                Text(
+                                  'QuoteShare',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: titleFontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF333333),
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                                SizedBox(height: verticalSpacing),
+                                
+                                // Subtitle
+                                Text(
+                                  'Find and share your favorite quotes',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: subtitleFontSize,
+                                    fontWeight: FontWeight.w300,
+                                    color: const Color(0xFF666666),
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                SizedBox(height: extraLargeVerticalSpacing * 1.5),
+                                
+                                // Email field
+                                _buildModernTextField(
+                                  controller: emailController,
+                                  hintText: 'Email',
+                                  icon: Icons.email_outlined,
+                                  width: widgetWidth,
+                                ),
+                                SizedBox(height: verticalSpacing),
+                                
+                                // Password field
+                                _buildModernTextField(
+                                  controller: passwordController,
+                                  hintText: 'Password',
+                                  icon: Icons.lock_outline,
+                                  isPassword: true,
+                                  width: widgetWidth,
+                                ),
+                                SizedBox(height: verticalSpacing),
+                                
+                                // Forgot password
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(right: (screenWidth - widgetWidth) / 2),
+                                    child: TextButton(
+                                      onPressed: () {},
+                                      child: Text(
+                                        'Forgot Password?',
+                                        style: TextStyle(
+                                          color: const Color(0xFFD4AF37),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: largeVerticalSpacing),
+                                
+                                // Login button
+                                _buildModernButton(
+                                  onPressed: state is AuthLoading 
+                                      ? null 
+                                      : () {
+                                          context.read<AuthBloc>().add(
+                                            LoginEvent(
+                                              email: emailController.text,
+                                              password: passwordController.text,
+                                            ),
+                                          );
+                                        },
+                                  text: state is AuthLoading ? 'Logging in...' : 'Log In',
+                                  width: widgetWidth,
+                                  isPrimary: true,
+                                  isLoading: state is AuthLoading,
+                                ),
+                                SizedBox(height: verticalSpacing),
+                                
+                                // Sign up button
+                                _buildModernButton(
+                                  onPressed: state is AuthLoading 
+                                      ? null 
+                                      : () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => const Signuppage()),
+                                          );
+                                        },
+                                  text: 'Sign Up',
+                                  width: widgetWidth,
+                                  isPrimary: false,
+                                ),
+                                SizedBox(height: largeVerticalSpacing),
+                                
+                                // Social login options
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    _buildSocialButton(
+                                      icon: Icons.g_mobiledata,
+                                      onPressed: () {},
+                                    ),
+                                    SizedBox(width: verticalSpacing),
+                                    _buildSocialButton(
+                                      icon: Icons.facebook,
+                                      onPressed: () {},
+                                    ),
+                                    SizedBox(width: verticalSpacing),
+                                    _buildSocialButton(
+                                      icon: Icons.apple,
+                                      onPressed: () {},
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        isPasswordVisible = !isPasswordVisible;
-                      });
-                    },
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 50),
-            Loginbutton(
-              onPressed: () {},
-              text: 'Log In',
-              width: widgetWidth,
-              height: 70,
-              color: AppColor.buttonColor,
-            ),
-            SizedBox(height: 20),
-            Loginbutton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => (Signuppage())),
-                );
-              },
-              text: 'Sign Up',
-              width: widgetWidth,
-              height: 70,
-              color: AppColor.textWhiteColor,
-            ),
-          ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData icon,
+    bool isPassword = false,
+    required double width,
+  }) {
+    return Container(
+      width: width,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: controller,
+        obscureText: isPassword ? !isPasswordVisible : false,
+        style: const TextStyle(
+          color: Color(0xFF333333),
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+        ),
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            icon,
+            color: const Color(0xFFAAAAAA),
+          ),
+          hintText: hintText,
+          hintStyle: const TextStyle(
+            color: Color(0xFFAAAAAA),
+            fontWeight: FontWeight.w400,
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 20,
+          ),
+          suffixIcon: isPassword
+              ? IconButton(
+                  icon: Icon(
+                    isPasswordVisible
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                    color: const Color(0xFFAAAAAA),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isPasswordVisible = !isPasswordVisible;
+                    });
+                  },
+                )
+              : null,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernButton({
+    required VoidCallback? onPressed,
+    required String text,
+    required double width,
+    required bool isPrimary,
+    bool isLoading = false,
+  }) {
+    return Container(
+      width: width,
+      height: 56,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: isPrimary 
+                ? const Color(0xFFD4AF37).withOpacity(0.3)
+                : Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isPrimary 
+              ? const Color(0xFFD4AF37)
+              : Colors.white,
+          foregroundColor: isPrimary 
+              ? Colors.white
+              : const Color(0xFF333333),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        ),
+        child: isLoading
+            ? SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    isPrimary ? Colors.white : const Color(0xFF333333),
+                  ),
+                ),
+              )
+            : Text(
+                text,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildSocialButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: IconButton(
+        onPressed: onPressed,
+        icon: Icon(
+          icon,
+          color: const Color(0xFF666666),
+          size: 28,
         ),
       ),
     );

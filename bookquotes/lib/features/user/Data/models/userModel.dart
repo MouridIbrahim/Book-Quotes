@@ -1,6 +1,4 @@
-// lib/features/user/data/models/user_model.dart
-
-
+// features/user/data/models/userModel.dart
 import 'package:bookquotes/features/user/domain/entities/User.dart';
 
 class UserModel extends User {
@@ -8,41 +6,42 @@ class UserModel extends User {
     super.id,
     required super.username,
     required super.email,
+    required super.password, // Add password
   });
 
-  /// 🔹 Convert backend JSON → UserModel
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'],
       username: json['username'],
       email: json['email'],
+      password: json['password'] ?? '', // Handle password from JSON
     );
   }
 
-  /// 🔹 Convert UserModel → JSON for backend
   Map<String, dynamic> toJson() {
     return {
       "id": id,
       "username": username,
       "email": email,
+      "password": password, // Include password
     };
   }
 
-  /// 🔹 Convert Domain Entity → UserModel
   factory UserModel.fromEntity(User user) {
     return UserModel(
       id: user.id,
       username: user.username,
       email: user.email,
+      password: user.password, // Include password
     );
   }
 
-  /// 🔹 Convert UserModel → Domain Entity
   User toEntity() {
     return User(
       id: id,
       username: username,
       email: email,
+      password: password, // Include password
     );
   }
 }

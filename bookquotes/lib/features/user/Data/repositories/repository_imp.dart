@@ -1,3 +1,4 @@
+// features/user/data/repositories/repository_imp.dart
 import 'package:bookquotes/core/error/Failure.dart';
 import 'package:bookquotes/features/user/Data/dataSources/userRemote.dart';
 import 'package:bookquotes/features/user/Data/models/loginRequestDTO.dart';
@@ -15,11 +16,11 @@ class UserRepositoryImpl implements UserDomainRepository {
   @override
   Future<Either<Failure, User>> addUser(User user) async {
     try {
-      // Here we use DTO to send the request
+      // Use the actual password from the user entity
       final dto = SignupRequestDTO(
         username: user.username,
         email: user.email,
-        password: '123456', // <- temporary or passed from UI
+        password: user.password, // Use actual password from user
       );
 
       final result = await remoteDataSource.addUser(dto);
@@ -32,13 +33,14 @@ class UserRepositoryImpl implements UserDomainRepository {
   @override
   Future<Either<Failure, LoginResponseModel>> login(User user) async {
     try {
+      // Use the actual password from the user entity
       final dto = LoginRequestDTO(
-        username: user.username,
-        password: '123456', // replace with real password from UI
+        email: user.email, // Using email for login
+        password: user.password, // Use actual password from user
       );
 
       final result = await remoteDataSource.login(dto);
-      return result; // Already returns LoginResponseModel
+      return result;
     } catch (e) {
       return Left(ServerFailure('Error logging in: $e'));
     }
@@ -46,13 +48,12 @@ class UserRepositoryImpl implements UserDomainRepository {
 
   @override
   Future<Either<Failure, Unit>> deleteUser(int id, String token) async {
-  try {
-    return await remoteDataSource.deleteUser(id, token);
-  } catch (e) {
-    return Left(ServerFailure('Error deleting user: $e'));
+    try {
+      return await remoteDataSource.deleteUser(id, token);
+    } catch (e) {
+      return Left(ServerFailure('Error deleting user: $e'));
+    }
   }
-}
-
 
   @override
   Future<Either<Failure, User>> getUser(int id) async {

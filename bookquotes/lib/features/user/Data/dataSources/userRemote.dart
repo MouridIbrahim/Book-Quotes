@@ -88,7 +88,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<Either<Failure, LoginResponseModel>> login(LoginRequestDTO dto) async {
     try {
       final response = await client.post(
-        Uri.parse('http://localhost:8080/api/users/login'),
+        Uri.parse('http://192.168.1.100:8080/api/users/login'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(dto.toJson()),
       );

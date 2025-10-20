@@ -1,10 +1,11 @@
+// features/user/data/models/loginRequestDTO.dart
 class LoginRequestDTO {
-  final String username;
+  final String email;  // Changed from username to email
   final String password;
 
-  LoginRequestDTO({required this.username, required this.password});
+  LoginRequestDTO({required this.email, required this.password});
 
   Map<String, dynamic> toJson() {
-    return {'username': username, 'password': password};
+    return {'email': email, 'password': password};  // Updated key
   }
 }
