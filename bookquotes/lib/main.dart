@@ -1,15 +1,16 @@
-// main.dart
 import 'package:bookquotes/core/config/theme/AppTheme.dart';
-import 'package:bookquotes/features/user/Presentation/authetications/bloc/auth_bloc.dart';
 import 'package:bookquotes/features/user/Presentation/authetications/bloc/injection_container.dart' as di;
 import 'package:bookquotes/features/user/Presentation/splash/pages/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bookquotes/features/user/Presentation/authetications/bloc/auth_bloc.dart';
+import 'package:bookquotes/features/user/presentation/authetications/pages/loginPage.dart';
+import 'package:bookquotes/main_app.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await di.init(); // Initialize dependency injection
+  await di.init();
   runApp(const MyApp());
 }
 
@@ -18,16 +19,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthBloc>(
-          create: (context) => di.getIt<AuthBloc>(),
-        ),
-      ],
+    return BlocProvider(
+      create: (context) => di.getIt<AuthBloc>()..add(CheckAuthEvent()),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        title: 'Book Quotes',
         theme: AppTheme.LightTheme,
-        home: const SplashPage(),
+        home: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state is Authenticated) {
+              return const MainScreen();
+            }
+            return const SplashPage();
+          },
+        ),
       ),
     );
   }

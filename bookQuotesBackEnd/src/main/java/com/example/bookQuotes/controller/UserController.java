@@ -47,20 +47,24 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequest) {
         try {
+            // First, get the user by email to retrieve the username
+            User user = userService.getUserByEmail(loginRequest.getEmail());
+
+            // Authenticate using the username (Spring Security uses username internally)
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginRequest.getUsername(),
+                            user.getUsername(),
                             loginRequest.getPassword()
                     )
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String jwt = jwtUtil.generateToken(loginRequest.getUsername());
+            String jwt = jwtUtil.generateToken(user.getUsername());
 
             LoginResponseDto response = new LoginResponseDto(
                     jwt,
-                    loginRequest.getUsername(),
+                    user.getUsername(),
                     "Login successful"
             );
 

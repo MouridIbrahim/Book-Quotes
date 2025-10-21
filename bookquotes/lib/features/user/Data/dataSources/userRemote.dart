@@ -24,8 +24,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<Either<Failure, UserModel>> addUser(SignupRequestDTO dto) async {
     try {
+      // 🔥 CHANGE THIS TO YOUR IP ADDRESS
       final response = await client.post(
-        Uri.parse('http://localhost:8080/api/users/signup'),
+        Uri.parse('http://10.32.221.252:8080/api/users/signup'),
         headers: {"Content-Type": "application/json"},
         body: json.encode(dto.toJson()),
       );
@@ -46,11 +47,12 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<Either<Failure, Unit>> deleteUser(int id, String token) async {
     try {
+      // 🔥 CHANGE THIS TO YOUR IP ADDRESS
       final response = await client.delete(
-        Uri.parse('http://localhost:8080/api/users/$id'),
+        Uri.parse('http://10.32.221.252:8080/api/users/$id'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token", // ✅ send JWT
+          "Authorization": "Bearer $token",
         },
       );
 
@@ -69,7 +71,10 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<Either<Failure, UserModel>> getUser(int id) async {
     try {
-      final response = await client.get(Uri.parse("$apiBaseUrl/$id"));
+      // 🔥 CHANGE THIS TO YOUR IP ADDRESS
+      final response = await client.get(
+        Uri.parse('http://10.32.221.252:8080/api/users/$id')
+      );
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
@@ -87,8 +92,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<Either<Failure, LoginResponseModel>> login(LoginRequestDTO dto) async {
     try {
+      // 🔥 CHANGE THIS TO YOUR IP ADDRESS
       final response = await client.post(
-        Uri.parse('http://192.168.1.100:8080/api/users/login'),
+        Uri.parse('http://10.32.221.252:8080/api/users/login'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(dto.toJson()),
       );

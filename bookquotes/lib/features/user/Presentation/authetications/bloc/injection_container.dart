@@ -1,17 +1,21 @@
-// injection_container.dart
+import 'package:bookquotes/core/services/token_storage.dart';
 import 'package:bookquotes/features/user/Data/dataSources/userRemote.dart';
 import 'package:bookquotes/features/user/Presentation/authetications/bloc/auth_bloc.dart';
 import 'package:bookquotes/features/user/data/repositories/repository_imp.dart';
 import 'package:bookquotes/features/user/domain/repositories/UserDomainRepo.dart';
 import 'package:bookquotes/features/user/domain/usecases/addUser.dart';
 import 'package:bookquotes/features/user/domain/usecases/login.dart';
-
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 
 final getIt = GetIt.instance;
 
 Future<void> init() async {
+  // Register TokenStorageService
+  if (!getIt.isRegistered<TokenStorageService>()) {
+    getIt.registerLazySingleton<TokenStorageService>(() => TokenStorageService());
+  }
+
   // Register http.Client
   if (!getIt.isRegistered<http.Client>()) {
     getIt.registerLazySingleton<http.Client>(() => http.Client());
@@ -51,6 +55,7 @@ Future<void> init() async {
       () => AuthBloc(
         loginUseCase: getIt<Login>(),
         registerUseCase: getIt<Adduser>(),
+        tokenStorage: getIt<TokenStorageService>(),
       ),
     );
   }

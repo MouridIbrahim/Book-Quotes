@@ -1,7 +1,4 @@
-// features/user/presentation/bloc/auth/auth_state.dart
 part of 'auth_bloc.dart';
-
-
 
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -13,6 +10,16 @@ abstract class AuthState extends Equatable {
 class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
+
+class Authenticated extends AuthState {
+  final String username;
+  final String token;
+
+  const Authenticated({required this.username, required this.token});
+
+  @override
+  List<Object> get props => [username, token];
+}
 
 class LoginSuccess extends AuthState {
   final LoginResponseModel loginResponse;

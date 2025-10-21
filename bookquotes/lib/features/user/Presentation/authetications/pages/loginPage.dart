@@ -30,21 +30,20 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 1200),
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.0, 0.65, curve: Curves.easeInOut),
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.0, 0.65, curve: Curves.easeInOut),
+      ),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _animationController.forward();
   }
@@ -61,17 +60,23 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     final double widgetWidth = min(400, screenWidth * 0.85);
-    final double titleFontSize = screenWidth < 400 ? 40 : 
-                                screenWidth < 600 ? 50 : 60;
-    final double subtitleFontSize = screenWidth < 400 ? 16 : 
-                                   screenWidth < 600 ? 18 : 20;
-    
+    final double titleFontSize = screenWidth < 400
+        ? 40
+        : screenWidth < 600
+        ? 50
+        : 60;
+    final double subtitleFontSize = screenWidth < 400
+        ? 16
+        : screenWidth < 600
+        ? 18
+        : 20;
+
     final double verticalSpacing = screenHeight * 0.02;
     final double largeVerticalSpacing = screenHeight * 0.04;
     final double extraLargeVerticalSpacing = screenHeight * 0.06;
-    
+
     final EdgeInsets screenPadding = EdgeInsets.symmetric(
       horizontal: screenWidth * 0.05,
       vertical: screenHeight * 0.05,
@@ -87,20 +92,25 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
-          // Handle successful login
+          print('✅ Login successful! Token: ${state.loginResponse.token}');
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Welcome ${state.loginResponse.username}!')),
+            SnackBar(
+              content: Text('Welcome ${state.loginResponse.username}!'),
+              backgroundColor: Colors.green,
+            ),
           );
-          // Navigate to main app
-          Navigator.pushReplacement(
+
+          // Navigate to main app and remove all previous routes
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const MainScreen()),
+            (route) => false,
           );
         }
         if (state is AuthError) {
-          // Handle errors
+          print('❌ Login error: ${state.message}');
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
         }
       },
@@ -110,10 +120,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                const Color(0xFFF5F5DC),
-                const Color(0xFFE8E0D5),
-              ],
+              colors: [const Color(0xFFF5F5DC), const Color(0xFFE8E0D5)],
             ),
           ),
           child: SafeArea(
@@ -122,7 +129,8 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                 padding: screenPadding,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    minHeight: screenHeight - screenPadding.top - screenPadding.bottom,
+                    minHeight:
+                        screenHeight - screenPadding.top - screenPadding.bottom,
                   ),
                   child: Center(
                     child: FadeTransition(
@@ -155,7 +163,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                   ),
                                 ),
                                 SizedBox(height: largeVerticalSpacing),
-                                
+
                                 // App title
                                 Text(
                                   'QuoteShare',
@@ -168,7 +176,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                   ),
                                 ),
                                 SizedBox(height: verticalSpacing),
-                                
+
                                 // Subtitle
                                 Text(
                                   'Find and share your favorite quotes',
@@ -180,8 +188,10 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                     letterSpacing: 0.5,
                                   ),
                                 ),
-                                SizedBox(height: extraLargeVerticalSpacing * 1.5),
-                                
+                                SizedBox(
+                                  height: extraLargeVerticalSpacing * 1.5,
+                                ),
+
                                 // Email field
                                 _buildModernTextField(
                                   controller: emailController,
@@ -190,7 +200,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                   width: widgetWidth,
                                 ),
                                 SizedBox(height: verticalSpacing),
-                                
+
                                 // Password field
                                 _buildModernTextField(
                                   controller: passwordController,
@@ -200,12 +210,14 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                   width: widgetWidth,
                                 ),
                                 SizedBox(height: verticalSpacing),
-                                
+
                                 // Forgot password
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: Padding(
-                                    padding: EdgeInsets.only(right: (screenWidth - widgetWidth) / 2),
+                                    padding: EdgeInsets.only(
+                                      right: (screenWidth - widgetWidth) / 2,
+                                    ),
                                     child: TextButton(
                                       onPressed: () {},
                                       child: Text(
@@ -219,11 +231,11 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                   ),
                                 ),
                                 SizedBox(height: largeVerticalSpacing),
-                                
+
                                 // Login button
                                 _buildModernButton(
-                                  onPressed: state is AuthLoading 
-                                      ? null 
+                                  onPressed: state is AuthLoading
+                                      ? null
                                       : () {
                                           context.read<AuthBloc>().add(
                                             LoginEvent(
@@ -232,21 +244,26 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                             ),
                                           );
                                         },
-                                  text: state is AuthLoading ? 'Logging in...' : 'Log In',
+                                  text: state is AuthLoading
+                                      ? 'Logging in...'
+                                      : 'Log In',
                                   width: widgetWidth,
                                   isPrimary: true,
                                   isLoading: state is AuthLoading,
                                 ),
                                 SizedBox(height: verticalSpacing),
-                                
+
                                 // Sign up button
                                 _buildModernButton(
-                                  onPressed: state is AuthLoading 
-                                      ? null 
+                                  onPressed: state is AuthLoading
+                                      ? null
                                       : () {
                                           Navigator.push(
                                             context,
-                                            MaterialPageRoute(builder: (context) => const Signuppage()),
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const Signuppage(),
+                                            ),
                                           );
                                         },
                                   text: 'Sign Up',
@@ -254,7 +271,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
                                   isPrimary: false,
                                 ),
                                 SizedBox(height: largeVerticalSpacing),
-                                
+
                                 // Social login options
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -320,10 +337,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
           fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
-          prefixIcon: Icon(
-            icon,
-            color: const Color(0xFFAAAAAA),
-          ),
+          prefixIcon: Icon(icon, color: const Color(0xFFAAAAAA)),
           hintText: hintText,
           hintStyle: const TextStyle(
             color: Color(0xFFAAAAAA),
@@ -368,7 +382,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: isPrimary 
+            color: isPrimary
                 ? const Color(0xFFD4AF37).withOpacity(0.3)
                 : Colors.black.withOpacity(0.1),
             blurRadius: 10,
@@ -379,12 +393,8 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isPrimary 
-              ? const Color(0xFFD4AF37)
-              : Colors.white,
-          foregroundColor: isPrimary 
-              ? Colors.white
-              : const Color(0xFF333333),
+          backgroundColor: isPrimary ? const Color(0xFFD4AF37) : Colors.white,
+          foregroundColor: isPrimary ? Colors.white : const Color(0xFF333333),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
@@ -434,11 +444,7 @@ class _LoginpageState extends State<Loginpage> with TickerProviderStateMixin {
       ),
       child: IconButton(
         onPressed: onPressed,
-        icon: Icon(
-          icon,
-          color: const Color(0xFF666666),
-          size: 28,
-        ),
+        icon: Icon(icon, color: const Color(0xFF666666), size: 28),
       ),
     );
   }

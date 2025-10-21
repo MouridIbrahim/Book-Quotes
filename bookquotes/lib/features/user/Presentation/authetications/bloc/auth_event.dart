@@ -1,4 +1,3 @@
-// features/user/presentation/bloc/auth/auth_event.dart
 part of 'auth_bloc.dart';
 
 abstract class AuthEvent extends Equatable {
@@ -34,3 +33,5 @@ class RegisterEvent extends AuthEvent {
 }
 
 class LogoutEvent extends AuthEvent {}
+
+class CheckAuthEvent extends AuthEvent {}

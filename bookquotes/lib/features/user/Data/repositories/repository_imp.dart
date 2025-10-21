@@ -33,10 +33,10 @@ class UserRepositoryImpl implements UserDomainRepository {
   @override
   Future<Either<Failure, LoginResponseModel>> login(User user) async {
     try {
-      // Use the actual password from the user entity
+      
       final dto = LoginRequestDTO(
-        email: user.email, // Using email for login
-        password: user.password, // Use actual password from user
+        email: user.email, 
+        password: user.password
       );
 
       final result = await remoteDataSource.login(dto);

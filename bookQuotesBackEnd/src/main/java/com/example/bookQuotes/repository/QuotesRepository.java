@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface QuotesRepository extends JpaRepository<Quotes,Long> {
-    //List<Quotes> findByUserOrderByCreatedAtDesc(User user);
-    //List<Quotes> findByUserAndTextContainingIgnoreCase(User user, String keyword);
+    List<Quotes> findByUserOrderByCreatedAtDesc(User user);
+    List<Quotes> findByUserAndTextContainingIgnoreCase(User user, String keyword);
 }

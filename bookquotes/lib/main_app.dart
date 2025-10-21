@@ -1,6 +1,6 @@
-import 'package:bookquotes/features/user/Presentation/screens/home_page.dart';
-import 'package:bookquotes/features/user/Presentation/screens/profile_page.dart';
-import 'package:bookquotes/features/user/Presentation/screens/search_page.dart';
+import 'package:bookquotes/features/user/Presentation/appBody/screens/home_page.dart';
+import 'package:bookquotes/features/user/Presentation/appBody/screens/profile_page.dart';
+import 'package:bookquotes/features/user/Presentation/appBody/screens/search_page.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {

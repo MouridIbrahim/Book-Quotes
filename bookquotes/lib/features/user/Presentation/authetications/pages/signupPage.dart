@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:bookquotes/features/user/Presentation/authetications/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Signuppage extends StatefulWidget {
   const Signuppage({super.key});
@@ -15,6 +17,7 @@ class _SignuppageState extends State<Signuppage> with TickerProviderStateMixin {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isPasswordVisible = false;
+  bool agreedToTerms = false; // Added state for checkbox
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -27,21 +30,20 @@ class _SignuppageState extends State<Signuppage> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 1200),
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.0, 0.65, curve: Curves.easeInOut),
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.0, 0.65, curve: Curves.easeInOut),
+      ),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _animationController.forward();
   }
@@ -55,29 +57,84 @@ class _SignuppageState extends State<Signuppage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  void _handleSignup() {
+    // Validation
+    if (usernameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a username'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (emailController.text.isEmpty || !emailController.text.contains('@')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid email'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (passwordController.text.isEmpty || passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password must be at least 6 characters'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (!agreedToTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please agree to Terms of Service'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Trigger registration event
+    context.read<AuthBloc>().add(
+      RegisterEvent(
+        username: usernameController.text.trim(),
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Get screen dimensions
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     // Calculate responsive dimensions
-    final double widgetWidth = min(
-      400,
-      screenWidth * 0.85,
-    );
-    
+    final double widgetWidth = min(400, screenWidth * 0.85);
+
     // Responsive font sizes
-    final double titleFontSize = screenWidth < 400 ? 40 : 
-                                screenWidth < 600 ? 50 : 60;
-    final double subtitleFontSize = screenWidth < 400 ? 16 : 
-                                   screenWidth < 600 ? 18 : 20;
-    
+    final double titleFontSize = screenWidth < 400
+        ? 40
+        : screenWidth < 600
+        ? 50
+        : 60;
+    final double subtitleFontSize = screenWidth < 400
+        ? 16
+        : screenWidth < 600
+        ? 18
+        : 20;
+
     // Responsive spacing
     final double verticalSpacing = screenHeight * 0.02;
     final double largeVerticalSpacing = screenHeight * 0.04;
     final double extraLargeVerticalSpacing = screenHeight * 0.06;
-    
+
     // Responsive padding
     final EdgeInsets screenPadding = EdgeInsets.symmetric(
       horizontal: screenWidth * 0.05,
@@ -92,192 +149,245 @@ class _SignuppageState extends State<Signuppage> with TickerProviderStateMixin {
       ),
     );
 
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              const Color(0xFFF5F5DC), // Light beige color matching the reference
-              const Color(0xFFE8E0D5), // Slightly darker beige
-            ],
+    // 🔥 WRAP THE ENTIRE SCAFFOLD WITH BlocListener
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is RegisterSuccess) {
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Registration successful! Please login.'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
+            ),
+          );
+
+          // Navigate back to login page after a short delay
+          Future.delayed(const Duration(seconds: 1), () {
+            if (mounted) {
+              Navigator.pop(context);
+            }
+          });
+        }
+
+        if (state is AuthError) {
+          // Show error message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [const Color(0xFFF5F5DC), const Color(0xFFE8E0D5)],
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: screenPadding,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: screenHeight - screenPadding.top - screenPadding.bottom,
-                ),
-                child: Center(
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: SlideTransition(
-                      position: _slideAnimation,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Logo and title section
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 10),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.format_quote,
-                              size: titleFontSize * 0.8,
-                              color: const Color(0xFFD4AF37), // Gold color
-                            ),
-                          ),
-                          SizedBox(height: largeVerticalSpacing),
-                          
-                          // App title
-                          Text(
-                            'Register Page',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: titleFontSize,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF333333),
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                          SizedBox(height: verticalSpacing),
-                          
-                          // Subtitle
-                          Text(
-                            'Join our community of quote lovers',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: subtitleFontSize,
-                              fontWeight: FontWeight.w300,
-                              color: const Color(0xFF666666),
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          SizedBox(height: extraLargeVerticalSpacing * 1.5),
-                          
-                          // Username field
-                          _buildModernTextField(
-                            controller: usernameController,
-                            hintText: 'Username',
-                            icon: Icons.person_outline,
-                            width: widgetWidth,
-                          ),
-                          SizedBox(height: verticalSpacing),
-                          
-                          // Email field
-                          _buildModernTextField(
-                            controller: emailController,
-                            hintText: 'Email',
-                            icon: Icons.email_outlined,
-                            width: widgetWidth,
-                          ),
-                          SizedBox(height: verticalSpacing),
-                          
-                          // Password field
-                          _buildModernTextField(
-                            controller: passwordController,
-                            hintText: 'Password',
-                            icon: Icons.lock_outline,
-                            isPassword: true,
-                            width: widgetWidth,
-                          ),
-                          SizedBox(height: verticalSpacing),
-                          
-                          // Terms and conditions
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: (screenWidth - widgetWidth) / 2),
-                            child: Row(
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: screenPadding,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight:
+                        screenHeight - screenPadding.top - screenPadding.bottom,
+                  ),
+                  child: Center(
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: BlocBuilder<AuthBloc, AuthState>(
+                          builder: (context, state) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Theme(
-                                  data: ThemeData(
-                                    unselectedWidgetColor: const Color(0xFFAAAAAA),
+                                // Logo and title section
+                                Container(
+                                  padding: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 10),
+                                      ),
+                                    ],
                                   ),
-                                  child: Checkbox(
-                                    value: true,
-                                    onChanged: (value) {},
-                                    activeColor: const Color(0xFFD4AF37),
+                                  child: Icon(
+                                    Icons.format_quote,
+                                    size: titleFontSize * 0.8,
+                                    color: const Color(0xFFD4AF37),
                                   ),
                                 ),
-                                Expanded(
-                                  child: Text(
-                                    'I agree to the Terms of Service and Privacy Policy',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: const Color(0xFF666666),
-                                    ),
+                                SizedBox(height: largeVerticalSpacing),
+
+                                // App title
+                                Text(
+                                  'Register Page',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: titleFontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF333333),
+                                    letterSpacing: 1.2,
                                   ),
+                                ),
+                                SizedBox(height: verticalSpacing),
+
+                                // Subtitle
+                                Text(
+                                  'Join our community of quote lovers',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: subtitleFontSize,
+                                    fontWeight: FontWeight.w300,
+                                    color: const Color(0xFF666666),
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: extraLargeVerticalSpacing * 1.5,
+                                ),
+
+                                // Username field
+                                _buildModernTextField(
+                                  controller: usernameController,
+                                  hintText: 'Username',
+                                  icon: Icons.person_outline,
+                                  width: widgetWidth,
+                                ),
+                                SizedBox(height: verticalSpacing),
+
+                                // Email field
+                                _buildModernTextField(
+                                  controller: emailController,
+                                  hintText: 'Email',
+                                  icon: Icons.email_outlined,
+                                  width: widgetWidth,
+                                ),
+                                SizedBox(height: verticalSpacing),
+
+                                // Password field
+                                _buildModernTextField(
+                                  controller: passwordController,
+                                  hintText: 'Password',
+                                  icon: Icons.lock_outline,
+                                  isPassword: true,
+                                  width: widgetWidth,
+                                ),
+                                SizedBox(height: verticalSpacing),
+
+                                // Terms and conditions
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: (screenWidth - widgetWidth) / 2,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Theme(
+                                        data: ThemeData(
+                                          unselectedWidgetColor: const Color(
+                                            0xFFAAAAAA,
+                                          ),
+                                        ),
+                                        child: Checkbox(
+                                          value: agreedToTerms,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              agreedToTerms = value ?? false;
+                                            });
+                                          },
+                                          activeColor: const Color(0xFFD4AF37),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          'I agree to the Terms of Service and Privacy Policy',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: const Color(0xFF666666),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: largeVerticalSpacing),
+
+                                // Sign up button - 🔥 UPDATED WITH FUNCTIONALITY
+                                _buildModernButton(
+                                  onPressed: state is AuthLoading
+                                      ? null
+                                      : _handleSignup,
+                                  text: state is AuthLoading
+                                      ? 'Signing up...'
+                                      : 'Sign Up',
+                                  width: widgetWidth,
+                                  isPrimary: true,
+                                  isLoading: state is AuthLoading,
+                                ),
+                                SizedBox(height: verticalSpacing),
+
+                                // Log in button
+                                _buildModernButton(
+                                  onPressed: state is AuthLoading
+                                      ? null
+                                      : () {
+                                          Navigator.pop(context);
+                                        },
+                                  text: 'Log In',
+                                  width: widgetWidth,
+                                  isPrimary: false,
+                                ),
+                                SizedBox(height: largeVerticalSpacing),
+
+                                // Social login options
+                                Column(
+                                  children: [
+                                    Text(
+                                      'Or sign up with',
+                                      style: TextStyle(
+                                        color: const Color(0xFF666666),
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    SizedBox(height: verticalSpacing),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        _buildSocialButton(
+                                          icon: Icons.g_mobiledata,
+                                          onPressed: () {},
+                                        ),
+                                        SizedBox(width: verticalSpacing),
+                                        _buildSocialButton(
+                                          icon: Icons.facebook,
+                                          onPressed: () {},
+                                        ),
+                                        SizedBox(width: verticalSpacing),
+                                        _buildSocialButton(
+                                          icon: Icons.apple,
+                                          onPressed: () {},
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ],
-                            ),
-                          ),
-                          SizedBox(height: largeVerticalSpacing),
-                          
-                          // Sign up button
-                          _buildModernButton(
-                            onPressed: () {},
-                            text: 'Sign Up',
-                            width: widgetWidth,
-                            isPrimary: true,
-                          ),
-                          SizedBox(height: verticalSpacing),
-                          
-                          // Log in button
-                          _buildModernButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            text: 'Log In',
-                            width: widgetWidth,
-                            isPrimary: false,
-                          ),
-                          SizedBox(height: largeVerticalSpacing),
-                          
-                          // Social login options
-                          Column(
-                            children: [
-                              Text(
-                                'Or sign up with',
-                                style: TextStyle(
-                                  color: const Color(0xFF666666),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              SizedBox(height: verticalSpacing),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _buildSocialButton(
-                                    icon: Icons.g_mobiledata,
-                                    onPressed: () {},
-                                  ),
-                                  SizedBox(width: verticalSpacing),
-                                  _buildSocialButton(
-                                    icon: Icons.facebook,
-                                    onPressed: () {},
-                                  ),
-                                  SizedBox(width: verticalSpacing),
-                                  _buildSocialButton(
-                                    icon: Icons.apple,
-                                    onPressed: () {},
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -319,10 +429,7 @@ class _SignuppageState extends State<Signuppage> with TickerProviderStateMixin {
           fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
-          prefixIcon: Icon(
-            icon,
-            color: const Color(0xFFAAAAAA),
-          ),
+          prefixIcon: Icon(icon, color: const Color(0xFFAAAAAA)),
           hintText: hintText,
           hintStyle: const TextStyle(
             color: Color(0xFFAAAAAA),
@@ -354,10 +461,11 @@ class _SignuppageState extends State<Signuppage> with TickerProviderStateMixin {
   }
 
   Widget _buildModernButton({
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed,
     required String text,
     required double width,
     required bool isPrimary,
+    bool isLoading = false,
   }) {
     return Container(
       width: width,
@@ -366,7 +474,7 @@ class _SignuppageState extends State<Signuppage> with TickerProviderStateMixin {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: isPrimary 
+            color: isPrimary
                 ? const Color(0xFFD4AF37).withOpacity(0.3)
                 : Colors.black.withOpacity(0.1),
             blurRadius: 10,
@@ -377,26 +485,33 @@ class _SignuppageState extends State<Signuppage> with TickerProviderStateMixin {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isPrimary 
-              ? const Color(0xFFD4AF37) // Gold color
-              : Colors.white,
-          foregroundColor: isPrimary 
-              ? Colors.white
-              : const Color(0xFF333333),
+          backgroundColor: isPrimary ? const Color(0xFFD4AF37) : Colors.white,
+          foregroundColor: isPrimary ? Colors.white : const Color(0xFF333333),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
         ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-          ),
-        ),
+        child: isLoading
+            ? SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    isPrimary ? Colors.white : const Color(0xFF333333),
+                  ),
+                ),
+              )
+            : Text(
+                text,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
+                ),
+              ),
       ),
     );
   }
@@ -421,11 +536,7 @@ class _SignuppageState extends State<Signuppage> with TickerProviderStateMixin {
       ),
       child: IconButton(
         onPressed: onPressed,
-        icon: Icon(
-          icon,
-          color: const Color(0xFF666666),
-          size: 28,
-        ),
+        icon: Icon(icon, color: const Color(0xFF666666), size: 28),
       ),
     );
   }
