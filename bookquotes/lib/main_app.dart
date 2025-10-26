@@ -1,7 +1,13 @@
-import 'package:bookquotes/features/user/Presentation/appBody/screens/home_page.dart';
-import 'package:bookquotes/features/user/Presentation/appBody/screens/profile_page.dart';
-import 'package:bookquotes/features/user/Presentation/appBody/screens/search_page.dart';
+
+
+import 'package:bookquotes/core/injection/injection_container.dart' as di;
+import 'package:bookquotes/features/quotes/presentation/appBody/screens/home_page.dart';
+import 'package:bookquotes/features/quotes/presentation/appBody/screens/profile_page.dart';
+import 'package:bookquotes/features/quotes/presentation/appBody/screens/search_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:bookquotes/features/quotes/presentation/bloc/quotes_bloc.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,8 +21,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late List<Animation<double>> _animations;
 
+  // Wrap HomePage with BlocProvider
   final List<Widget> _pages = [
-    const HomePage(),
+    BlocProvider(
+      create: (context) => di.sl<QuotesBloc>(), 
+      child: const HomePage(),
+    ),
     const SearchPage(),
     const ProfilePage(),
   ];
@@ -58,7 +68,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Allows the body to extend behind the bottom nav bar
+      extendBody: true,
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         transitionBuilder: (child, animation) {
@@ -132,7 +142,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           _currentIndex = index;
         });
         
-        // Add a slight bounce animation when tapped
         _animationController.reset();
         _animationController.forward();
       },

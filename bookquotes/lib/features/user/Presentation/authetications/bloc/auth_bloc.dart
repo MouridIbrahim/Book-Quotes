@@ -5,7 +5,6 @@ import 'package:bookquotes/features/user/Data/models/loginResponseDTO.dart';
 import 'package:bookquotes/features/user/domain/entities/User.dart';
 import 'package:bookquotes/features/user/domain/usecases/addUser.dart';
 import 'package:bookquotes/features/user/domain/usecases/login.dart';
-import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
 part 'auth_event.dart';

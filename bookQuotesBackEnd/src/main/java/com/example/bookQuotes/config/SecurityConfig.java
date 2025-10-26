@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/signup", "/api/users/login", "/error").permitAll()
+                        .requestMatchers("/api/quotes/all", "/api/quotes/{id}").permitAll() // Allow public access to quotes
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

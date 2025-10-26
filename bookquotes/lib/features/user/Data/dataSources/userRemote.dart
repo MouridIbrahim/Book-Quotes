@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:bookquotes/core/Constants.dart';
 import 'package:bookquotes/core/error/Failure.dart';
 import 'package:bookquotes/features/user/Data/models/loginRequestDTO.dart';
 import 'package:bookquotes/features/user/Data/models/loginResponseDTO.dart';
@@ -26,7 +25,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     try {
       // 🔥 CHANGE THIS TO YOUR IP ADDRESS
       final response = await client.post(
-        Uri.parse('http://10.32.221.252:8080/api/users/signup'),
+        Uri.parse('http://10.42.254.252:8080/api/users/signup'),
         headers: {"Content-Type": "application/json"},
         body: json.encode(dto.toJson()),
       );
@@ -94,7 +93,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     try {
       // 🔥 CHANGE THIS TO YOUR IP ADDRESS
       final response = await client.post(
-        Uri.parse('http://10.32.221.252:8080/api/users/login'),
+        Uri.parse('http://10.42.254.252:8080/api/users/login'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(dto.toJson()),
       );

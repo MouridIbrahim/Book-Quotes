@@ -1,20 +1,23 @@
 package com.example.bookQuotes.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity(name = "Quotes")
 public class Quotes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Long id;
+    private Long id;
+
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @Column
-    private  String text;
+    private String text;
 
     @Column
     private String author;
@@ -29,11 +32,19 @@ public class Quotes {
     public Quotes() {
     }
 
-    public Quotes( String text, String author, String book_title, User user) {
+    public Quotes(String text, String author, String book_title, User user) {
         this.text = text;
         this.author = author;
         this.book_title = book_title;
         this.user = user;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -49,7 +60,7 @@ public class Quotes {
     }
 
     public void setText(String text) {
-        text = text;
+        this.text = text;  // FIXED: Added "this."
     }
 
     public String getAuthor() {
@@ -57,7 +68,7 @@ public class Quotes {
     }
 
     public void setAuthor(String author) {
-        author = author;
+        this.author = author;  // FIXED: Added "this."
     }
 
     public String getBook_title() {
@@ -65,7 +76,7 @@ public class Quotes {
     }
 
     public void setBook_title(String book_title) {
-        book_title = book_title;
+        this.book_title = book_title;  // FIXED: Added "this."
     }
 
     public User getUser() {
