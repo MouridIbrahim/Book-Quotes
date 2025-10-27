@@ -233,7 +233,7 @@ class _HomePageState extends State<HomePage> {
                   context.read<QuotesBloc>().add(FetchAllQuotesEvent());
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: AppColor.buttonColor,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
                     vertical: 12,
@@ -280,7 +280,7 @@ class _HomePageState extends State<HomePage> {
                 context.read<QuotesBloc>().add(FetchAllQuotesEvent());
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: AppColor.buttonColor,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
                   vertical: 12,
@@ -326,7 +326,7 @@ class _HomePageState extends State<HomePage> {
                 context.read<QuotesBloc>().add(FetchAllQuotesEvent());
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: AppColor.buttonColor,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
                   vertical: 12,
