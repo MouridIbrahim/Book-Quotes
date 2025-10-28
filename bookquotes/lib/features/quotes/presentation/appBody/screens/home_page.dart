@@ -1,10 +1,10 @@
 // features/quotes/presentation/pages/home_page.dart
 import 'package:bookquotes/core/config/theme/AppColor.dart';
 import 'package:bookquotes/features/quotes/domain/entities/Quote.dart';
+import 'package:bookquotes/features/quotes/presentation/appBody/screens/add_quote_page.dart';
 import 'package:bookquotes/features/quotes/presentation/bloc/quotes_bloc.dart';
 import 'package:bookquotes/features/quotes/presentation/bloc/quotes_event.dart';
 import 'package:bookquotes/features/quotes/presentation/bloc/quotes_state.dart';
-import 'package:bookquotes/features/quotes/presentation/appBody/screens/add_quote_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -34,22 +34,31 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         title: const Text(
           "Book Quotes",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
         ),
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black87),
         actions: [
           // Add Quote Button
           IconButton(
-            icon: const Icon(Icons.add_circle_outline, size: 28),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AddQuotePage()),
-              );
-            },
-            tooltip: 'Add Quote',
-          ),
+  icon: const Icon(
+    Icons.add_circle_outline,
+    size: 28,
+  ),
+  onPressed: () {
+    // Navigate to Add Quote Page - no need to pass bloc
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AddQuotePage(), // Remove quotesBloc parameter
+      ),
+    );
+  },
+  tooltip: 'Add Quote',
+),
           const SizedBox(width: 8),
         ],
       ),
@@ -87,8 +96,8 @@ class _HomePageState extends State<HomePage> {
     if (state is QuotesLoading) {
       return _buildLoadingState();
     } else if (state is QuotesLoaded) {
-      return state.quotes.isEmpty
-          ? _buildEmptyState()
+      return state.quotes.isEmpty 
+          ? _buildEmptyState() 
           : _buildQuotesList(state.quotes);
     } else if (state is QuotesError) {
       return _buildErrorState(state.message);
@@ -98,14 +107,12 @@ class _HomePageState extends State<HomePage> {
       return _buildErrorState(state.message, showRetry: false);
     } else if (state is DeleteQuoteError) {
       return _buildErrorState(state.message, showRetry: false);
-    } else if (state is QuoteAdded ||
-        state is QuoteUpdated ||
-        state is QuoteDeleted) {
+    } else if (state is QuoteAdded || state is QuoteUpdated || state is QuoteDeleted) {
       // These states are handled in the listener, but we need to show loading
       // while we refresh the list after the operation
       return _buildLoadingState();
     }
-
+    
     // Initial state
     return _buildInitialState();
   }
@@ -146,7 +153,9 @@ class _HomePageState extends State<HomePage> {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -170,10 +179,7 @@ class _HomePageState extends State<HomePage> {
                 // Quote ID (if available)
                 if (quote.id != null)
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(8),
@@ -219,12 +225,19 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red[400],
+            ),
             const SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+              ),
             ),
             if (showRetry) ...[
               const SizedBox(height: 24),
@@ -234,10 +247,7 @@ class _HomePageState extends State<HomePage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColor.buttonColor,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 12,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
                 child: const Text(
                   'Try Again',
@@ -258,7 +268,11 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.format_quote, size: 64, color: Colors.grey[400]),
+            Icon(
+              Icons.format_quote,
+              size: 64,
+              color: Colors.grey[400],
+            ),
             const SizedBox(height: 16),
             const Text(
               'No Quotes Found',
@@ -272,7 +286,10 @@ class _HomePageState extends State<HomePage> {
             const Text(
               'There are no quotes available at the moment.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -281,10 +298,7 @@ class _HomePageState extends State<HomePage> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColor.buttonColor,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               ),
               child: const Text(
                 'Refresh',
@@ -304,7 +318,11 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.format_quote, size: 64, color: Colors.grey[400]),
+            Icon(
+              Icons.format_quote,
+              size: 64,
+              color: Colors.grey[400],
+            ),
             const SizedBox(height: 16),
             const Text(
               'Welcome to Book Quotes',
@@ -318,7 +336,10 @@ class _HomePageState extends State<HomePage> {
             const Text(
               'Tap the refresh button to load your favorite book quotes',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -327,10 +348,7 @@ class _HomePageState extends State<HomePage> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColor.buttonColor,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               ),
               child: const Text(
                 'Load Quotes',
@@ -343,18 +361,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _showSnackBar(
-    BuildContext context,
-    String message,
-    Color backgroundColor,
-  ) {
+  void _showSnackBar(BuildContext context, String message, Color backgroundColor) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
         backgroundColor: backgroundColor,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
       ),
     );
   }

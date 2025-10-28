@@ -17,15 +17,16 @@ abstract class UserRemoteDataSource {
 }
 
 class UserRemoteDataSourceImpl implements UserRemoteDataSource {
+  final String baseURL = 'http://10.42.254.252:8080/api/users';
   final http.Client client;
   UserRemoteDataSourceImpl({required this.client});
 
   @override
   Future<Either<Failure, UserModel>> addUser(SignupRequestDTO dto) async {
     try {
-      // 🔥 CHANGE THIS TO YOUR IP ADDRESS
+      
       final response = await client.post(
-        Uri.parse('http://10.42.254.252:8080/api/users/signup'),
+        Uri.parse('$baseURL/signup'),
         headers: {"Content-Type": "application/json"},
         body: json.encode(dto.toJson()),
       );
@@ -46,9 +47,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<Either<Failure, Unit>> deleteUser(int id, String token) async {
     try {
-      // 🔥 CHANGE THIS TO YOUR IP ADDRESS
+     
       final response = await client.delete(
-        Uri.parse('http://10.32.221.252:8080/api/users/$id'),
+        Uri.parse('$baseURL/$id'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -70,9 +71,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<Either<Failure, UserModel>> getUser(int id) async {
     try {
-      // 🔥 CHANGE THIS TO YOUR IP ADDRESS
+      
       final response = await client.get(
-        Uri.parse('http://10.32.221.252:8080/api/users/$id')
+        Uri.parse('$baseURL/$id'),
       );
 
       if (response.statusCode == 200) {
@@ -91,9 +92,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<Either<Failure, LoginResponseModel>> login(LoginRequestDTO dto) async {
     try {
-      // 🔥 CHANGE THIS TO YOUR IP ADDRESS
+      
       final response = await client.post(
-        Uri.parse('http://10.42.254.252:8080/api/users/login'),
+        Uri.parse('$baseURL/login'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(dto.toJson()),
       );

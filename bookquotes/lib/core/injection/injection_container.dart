@@ -2,6 +2,7 @@
 // This file contains ALL dependencies for the entire app
 
 // Quotes imports
+import 'package:bookquotes/core/services/token_storage.dart';
 import 'package:bookquotes/features/quotes/data/Repository/repository_impl.dart';
 import 'package:bookquotes/features/quotes/data/dataSources/quoteRemote.dart';
 import 'package:bookquotes/features/quotes/domain/repository/repository.dart';
@@ -19,7 +20,7 @@ import 'package:bookquotes/features/user/domain/usecases/addUser.dart';
 import 'package:bookquotes/features/user/domain/repositories/UserDomainRepo.dart';
 import 'package:bookquotes/features/user/Data/repositories/repository_imp.dart';
 import 'package:bookquotes/features/user/Data/dataSources/userRemote.dart' as auth_remote;
-import 'package:bookquotes/core/services/token_storage.dart';
+
 
 // External
 import 'package:get_it/get_it.dart';
@@ -50,7 +51,10 @@ Future<void> init() async {
     // Data sources
     if (!sl.isRegistered<QuotesRemoteDataSource>()) {
       sl.registerLazySingleton<QuotesRemoteDataSource>(
-        () => QuotesRemoteDataSourceImpl(client: sl()),
+        () => QuotesRemoteDataSourceImpl(
+          client: sl(),
+          tokenStorage: sl(),
+        ),
       );
     }
 
