@@ -161,5 +161,8 @@ class QuotesRemoteDataSourceImpl implements QuotesRemoteDataSource {
       print('❌ Unexpected error: $e');
       return Left(UnexpectedFailure(e.toString()));
     }
+
   }
+
+  
 }
