@@ -1,3 +1,4 @@
+
 # BookQuotes - Quote Sharing Platform 📚✨
 
 A full-stack mobile application for discovering, sharing, and managing your favorite book quotes. Built with Flutter for the frontend and Spring Boot for the backend, featuring a clean architecture and modern development practices.
@@ -49,26 +50,66 @@ A full-stack mobile application for discovering, sharing, and managing your favo
 | **Maven** | Dependency management |
 | **BCrypt** | Password encryption |
 
+## 📸 Screenshots
 
-text
+*(Add your app screenshots here)*
+
+## 🏗 Project Architecture
+
+### Frontend Structure
+```
+lib/
+├── core/
+│   ├── config/theme/          # App themes and colors
+│   ├── error/                 # Custom exceptions and failures
+│   ├── services/              # Token storage and core services
+│   └── utils/                 # Utility classes
+├── features/
+│   ├── quotes/                # Quotes feature module
+│   │   ├── data/              # Data layer
+│   │   ├── domain/            # Domain layer
+│   │   └── presentation/      # Presentation layer
+│   └── user/                  # User authentication module
+│       ├── data/              # Auth data layer
+│       ├── domain/            # Auth domain layer
+│       └── presentation/      # Auth presentation layer
+└── main.dart                  # App entry point
+```
+
+### Backend Structure
+```
+src/
+├── main/java/com/example/bookQuotes/
+│   ├── config/                # Security and JWT configuration
+│   ├── controller/            # REST controllers
+│   ├── entity/                # JPA entities
+│   ├── repository/            # Data access layer
+│   ├── services/              # Business logic layer
+│   ├── dto/                   # Data transfer objects
+│   └── exceptionHandler/      # Custom exceptions
+└── resources/
+    └── application.properties
+```
 
 ## ⚙️ Installation & Setup
 
 ### Prerequisites
-- Flutter SDK 3.0+
-- Dart SDK
-- Java JDK 17+
-- Maven 3.6+
-- MySQL 8.0+
+- **Flutter SDK 3.0+**
+- **Dart SDK**
+- **Java JDK 17+**
+- **Maven 3.6+**
+- **MySQL 8.0+**
 
+### Backend Setup
 
-1. **Clone the repository**
+#### 1. Clone the repository
 ```bash
 git clone https://github.com/yourusername/bookquotes.git
 cd bookquotes/backend
-Configure database in application.properties
+```
 
-properties
+#### 2. Configure database in `application.properties`
+```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/bookquotes
 spring.datasource.username=your_username
 spring.datasource.password=your_password
@@ -82,47 +123,62 @@ server.port=8080
 spring.web.cors.allowed-origins=http://localhost:3000,http://10.0.2.2:8080
 spring.web.cors.allowed-methods=GET,POST,PUT,DELETE,OPTIONS
 spring.web.cors.allowed-headers=*
-Run the backend
+```
 
-bash
+#### 3. Run the backend
+```bash
 mvn spring-boot:run
-Frontend Setup
-Navigate to frontend directory
+```
 
-bash
+### Frontend Setup
+
+#### 1. Navigate to frontend directory
+```bash
 cd bookquotes/frontend
-Install dependencies
+```
 
-bash
+#### 2. Install dependencies
+```bash
 flutter pub get
-Configure API endpoint
-Update lib/features/quotes/data/dataSources/quoteRemote.dart:
+```
 
-dart
+#### 3. Configure API endpoint
+Update `lib/features/quotes/data/dataSources/quoteRemote.dart`:
+```dart
 static const String baseUrl = 'http://10.0.2.2:8080/api/quotes'; // For Android emulator
 // static const String baseUrl = 'http://localhost:8080/api/quotes'; // For iOS simulator
 // static const String baseUrl = 'http://your-server-ip:8080/api/quotes'; // For physical device
-Run the application
+```
 
-bash
+#### 4. Run the application
+```bash
 flutter run
-📚 API Documentation
-Authentication Endpoints
-Method	Endpoint	Description	Auth Required
-POST	/api/users/signup	User registration	❌
-POST	/api/users/login	User login	❌
-GET	/api/users/{id}	Get user by ID	✅
-DELETE	/api/users/{id}	Delete user	✅
-Quotes Endpoints
-Method	Endpoint	Description	Auth Required
-GET	/api/quotes/all	Get all quotes	❌
-GET	/api/quotes/{id}	Get quote by ID	❌
-POST	/api/quotes/create	Create new quote	✅
-DELETE	/api/quotes/delete/{id}	Delete quote	✅
-Request/Response Examples
-User Registration
+```
 
-http
+## 📚 API Documentation
+
+### Authentication Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/users/signup` | User registration | ❌ |
+| `POST` | `/api/users/login` | User login | ❌ |
+| `GET` | `/api/users/{id}` | Get user by ID | ✅ |
+| `DELETE` | `/api/users/{id}` | Delete user | ✅ |
+
+### Quotes Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `GET` | `/api/quotes/all` | Get all quotes | ❌ |
+| `GET` | `/api/quotes/{id}` | Get quote by ID | ❌ |
+| `POST` | `/api/quotes/create` | Create new quote | ✅ |
+| `DELETE` | `/api/quotes/delete/{id}` | Delete quote | ✅ |
+
+### Request/Response Examples
+
+#### User Registration
+```http
 POST /api/users/signup
 Content-Type: application/json
 
@@ -131,16 +187,18 @@ Content-Type: application/json
   "email": "user@example.com",
   "password": "securepassword"
 }
-Response:
+```
 
-json
+**Response:**
+```json
 {
   "username": "booklover",
   "email": "user@example.com"
 }
-User Login
+```
 
-http
+#### User Login
+```http
 POST /api/users/login
 Content-Type: application/json
 
@@ -148,17 +206,19 @@ Content-Type: application/json
   "email": "user@example.com",
   "password": "securepassword"
 }
-Response:
+```
 
-json
+**Response:**
+```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "username": "booklover",
   "message": "Login successful"
 }
-Create Quote
+```
 
-http
+#### Create Quote
+```http
 POST /api/quotes/create
 Authorization: Bearer your-jwt-token
 Content-Type: application/json
@@ -168,33 +228,37 @@ Content-Type: application/json
   "author": "William Shakespeare",
   "book_name": "Hamlet"
 }
-Response:
+```
 
-json
+**Response:**
+```json
 {
   "text": "To be or not to be, that is the question.",
   "author": "William Shakespeare",
   "book_title": "Hamlet"
 }
-🔧 Configuration
-Backend Environment Variables
-bash
+```
+
+## 🔧 Configuration
+
+### Backend Environment Variables
+```bash
 export DATABASE_URL=jdbc:mysql://localhost:3306/bookquotes
 export DATABASE_USERNAME=your_username
 export DATABASE_PASSWORD=your_password
 export JWT_SECRET=your-jwt-secret-key
-Frontend Configuration
+```
+
+### Frontend Configuration
 Key configuration files:
+- `lib/core/config/theme/AppTheme.dart` - Theme customization
+- `lib/core/config/theme/AppColor.dart` - Color scheme
+- `lib/core/services/token_storage.dart` - Token management
 
-lib/core/config/theme/AppTheme.dart - Theme customization
+## 🧪 Testing
 
-lib/core/config/theme/AppColor.dart - Color scheme
-
-lib/core/services/token_storage.dart - Token management
-
-🧪 Testing
-Backend Testing
-bash
+### Backend Testing
+```bash
 # Run all tests
 mvn test
 
@@ -203,8 +267,10 @@ mvn test -Dtest=QuotesControllerTest
 
 # Generate test coverage report
 mvn jacoco:report
-Frontend Testing
-bash
+```
+
+### Frontend Testing
+```bash
 # Run unit tests
 flutter test
 
@@ -213,9 +279,12 @@ flutter test integration_test/
 
 # Generate test coverage
 flutter test --coverage
-📦 Build & Deployment
-Build Flutter APK
-bash
+```
+
+## 📦 Build & Deployment
+
+### Build Flutter APK
+```bash
 # Build APK for Android
 flutter build apk --release
 
@@ -224,96 +293,99 @@ flutter build appbundle --release
 
 # Build for iOS
 flutter build ios --release
-Build Spring Boot Application
-bash
+```
+
+### Build Spring Boot Application
+```bash
 # Clean build
 mvn clean package
 
 # Run with production profile
 java -jar target/bookquotes-1.0.0.jar --spring.profiles.active=prod
-Docker Deployment
-dockerfile
+```
+
+### Docker Deployment
+```dockerfile
 # Backend Dockerfile
 FROM openjdk:17-jdk-slim
 COPY target/bookquotes-1.0.0.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/app.jar"]
-🤝 Contributing
+```
+
+## 🤝 Contributing
+
 We welcome contributions! Please follow these steps:
 
-Fork the repository
+1. **Fork the repository**
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. **Commit your changes**
+   ```bash
+   git commit -m 'Add some amazing feature'
+   ```
+4. **Push to the branch**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+5. **Open a Pull Request**
 
-Create a feature branch
+### Development Guidelines
+- Follow Flutter and Spring Boot best practices
+- Write tests for new features
+- Update documentation accordingly
+- Use meaningful commit messages
 
-bash
-git checkout -b feature/amazing-feature
-Commit your changes
+## 🐛 Troubleshooting
 
-bash
-git commit -m 'Add some amazing feature'
-Push to the branch
+### Common Issues
 
-bash
-git push origin feature/amazing-feature
-Open a Pull Request
-
-Development Guidelines
-Follow Flutter and Spring Boot best practices
-
-Write tests for new features
-
-Update documentation accordingly
-
-Use meaningful commit messages
-
-🐛 Troubleshooting
-Common Issues
-Backend Connection Refused
-
-bash
+#### Backend Connection Refused
+```bash
 # Check if Spring Boot is running
 curl http://localhost:8080/api/quotes/all
 
 # Verify database connection
 mysql -u username -p bookquotes
-Flutter Build Issues
+```
 
-bash
+#### Flutter Build Issues
+```bash
 # Clean and rebuild
 flutter clean
 flutter pub get
 flutter run
-JWT Token Issues
+```
 
-Verify token expiration (30 days default)
+#### JWT Token Issues
+- Verify token expiration (30 days default)
+- Check JWT secret configuration
+- Ensure proper Authorization header format
 
-Check JWT secret configuration
+## 📄 License
 
-Ensure proper Authorization header format
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 👥 Authors
 
-👥 Authors
-Your Name - Initial work - YourUsername
+- **Your Name** - *Initial work* - [YourUsername](https://github.com/yourusername)
 
-🙏 Acknowledgments
-Flutter team for the amazing framework
+## 🙏 Acknowledgments
 
-Spring Boot team for robust backend solutions
+- Flutter team for the amazing framework
+- Spring Boot team for robust backend solutions
+- Contributors and testers
+- Open source community
 
-Contributors and testers
+## 📞 Support
 
-Open source community
-
-📞 Support
 If you encounter any issues or have questions:
 
-Check existing issues on GitHub
+1. **Check existing issues** on GitHub
+2. **Create a new issue** with detailed description
+3. **Contact the development team**
 
-Create a new issue with detailed description
-
-Contact the development team
-
-Happy Quote Sharing! 📖💫
+---
 
