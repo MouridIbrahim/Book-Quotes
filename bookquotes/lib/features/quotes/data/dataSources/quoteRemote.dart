@@ -119,7 +119,7 @@ class QuotesRemoteDataSourceImpl implements QuotesRemoteDataSource {
       final body = json.encode({
         'text': quoteModel.text,
         'author': quoteModel.author,
-        'book_name': quoteModel.book, // Spring Boot expects 'book_name'
+        'book_name': quoteModel.book,
       });
       
       print('📤 Sending: $body');
