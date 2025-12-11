@@ -370,7 +370,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **Ibrahim Mourif**  - [Ibrahim Mourid](https://github.com/MouridIbrahim)
+- **Ibrahim Mourid**  - [Ibrahim Mourid](https://github.com/MouridIbrahim)
 
 ## 🙏 Acknowledgments
 
